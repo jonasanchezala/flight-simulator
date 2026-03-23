@@ -10,15 +10,14 @@ Server-Sent Events (SSE) stream.
 
 1. [Architecture Overview](#architecture-overview)
 2. [Tech Stack](#tech-stack)
-3. [Package Structure](#package-structure)
-4. [Prerequisites](#prerequisites)
-5. [Setup & Run](#setup--run)
-6. [Postman Collection](#postman-collection)
-7. [API Reference](#api-reference)
-8. [Simulation Design](#simulation-design)
-9. [Configuration](#configuration)
-10. [Running Tests](#running-tests)
-11. [Design Decisions & Assumptions](#design-decisions--assumptions)
+3. [Prerequisites](#prerequisites)
+4. [Setup & Run](#setup--run)
+5. [Postman Collection](#postman-collection)
+6. [API Reference](#api-reference)
+7. [Simulation Design](#simulation-design)
+8. [Configuration](#configuration)
+9. [Running Tests](#running-tests)
+10. [Design Decisions & Assumptions](#design-decisions--assumptions)
 
 ---
 
@@ -67,58 +66,6 @@ FlightController
 | API Docs        | SpringDoc OpenAPI 2.x / Swagger UI      |
 | Containerisation| Docker + Docker Compose                 |
 | Testing         | JUnit 5, Mockito, StepVerifier, WebTestClient |
-
----
-
-## Package Structure
-
-```
-com.flight.simulator/
-├── config/
-│   ├── SimulationProperties.java     @ConfigurationProperties — validated phase durations
-│   ├── WebFluxConfig.java            Jackson + OpenAPI beans
-│   └── FlightIdGenerationCallback.java  BeforeSaveCallback — UUID on INSERT
-│
-├── controller/
-│   ├── FlightController.java         REST + SSE endpoints
-│   └── GlobalExceptionHandler.java   ApiException hierarchy → HTTP error shapes
-│
-├── dto/
-│   ├── FlightRequest.java            record — inbound request
-│   ├── FlightResponse.java           response DTO
-│   ├── FlightStatusResponse.java     flight + latestMetric wrapper
-│   ├── MetricResponse.java           metrics snapshot response
-│   └── PhaseDefinition.java          record — phase + duration pair
-│
-├── exception/
-│   ├── ApiException.java             abstract base — getHttpStatus() + getErrorCode()
-│   └── FlightNotFoundException.java  404 NOT_FOUND
-│
-├── mapper/
-│   ├── FlightMapper.java             FlightRequest ↔ Flight ↔ FlightResponse
-│   └── MetricMapper.java             FlightMetrics → MetricResponse
-│
-├── model/
-│   ├── Flight.java                   R2DBC entity — boolean active, FlightPhase enum
-│   ├── FlightMetrics.java            R2DBC entity — BIGSERIAL id, @ReadOnlyProperty
-│   └── FlightPhase.java              enum — pure type, no transition logic
-│
-├── repository/
-│   ├── FlightRepository.java         findByActive(Boolean)
-│   └── FlightMetricsRepository.java  history + top-by-flight queries
-│
-├── scheduler/
-│   └── FlightProcessorScheduler.java Flux.interval tick loop, @Transactional tickFlight
-│
-├── service/
-│   ├── FlightService.java            startFlight, listFlights, getFlightStatus, getFlightHistory
-│   ├── FlightSimulationService.java  pure metric computation — altitude, speed, position…
-│   ├── PhaseService.java             interface — resolve / startMinuteOf / durationOf
-│   └── PropertiesPhaseService.java   PhaseService driven by SimulationProperties
-│
-└── stream/
-    └── FlightStreamRegistry.java     SSE sink lifecycle — register / emit / complete / streamFlight
-```
 
 ---
 
