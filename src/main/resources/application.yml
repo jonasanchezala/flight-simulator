@@ -1,0 +1,46 @@
+spring:
+  application:
+    name: flight-simulator
+
+  r2dbc:
+    url: r2dbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:flightdb}
+    username: ${DB_USER:flight}
+    password: ${DB_PASSWORD:flight}
+    pool:
+      initial-size: 5
+      max-size: 20
+      max-idle-time: 30m
+
+  sql:
+    init:
+      mode: always
+      platform: postgresql
+
+server:
+  port: ${SERVER_PORT:8080}
+
+simulation:
+  # 1 real second = 60 simulated seconds - 1 minute of flight per real second
+  time-multiplier: ${SIMULATION_TIME_MULTIPLIER:60}
+  # How often in real seconds to capture a metrics snapshot
+  tick-interval-seconds: ${SIMULATION_TICK_INTERVAL_SECONDS:5}
+  # Phase duration in minutes
+  phases:
+    boarding: 30
+    taxi-out: 15
+    takeoff-climb: 25
+    cruise: 210
+    descent: 25
+    landing: 5
+    taxi-in: 10
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+
+logging:
+  level:
+    com.flight: DEBUG
+    io.r2dbc: INFO
