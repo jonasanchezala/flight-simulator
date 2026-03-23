@@ -137,7 +137,7 @@ flight-simulator.postman_collection.json
 5. Stream Flight Metrics (SSE)           → opens live event stream in Postman
 ```
 
-**Included requests (11 total):**
+**Included requests (9 total):**
 
 | Request | Method                              | Expected Status |
 |---------|-------------------------------------|-----------------|
