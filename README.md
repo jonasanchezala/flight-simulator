@@ -139,19 +139,17 @@ flight-simulator.postman_collection.json
 
 **Included requests (11 total):**
 
-| Request | Method | Expected Status |
-|---------|--------|-----------------|
-| Start Flight | `POST /flights` | 201 |
-| Start Flight — Same Origin & Destination | `POST /flights` | 422 |
-| Start Flight — Blank Origin | `POST /flights` | 400 |
-| Start Flight — Invalid Time Multiplier | `POST /flights` | 422 |
-| List All Flights | `GET /flights` | 200 |
-| Get Flight Status | `GET /flights/{{flightId}}` | 200 |
-| Get Flight Status — Not Found | `GET /flights/does-not-exist` | 404 |
+| Request | Method                              | Expected Status |
+|---------|-------------------------------------|-----------------|
+| Start Flight | `POST /flights`                     | 201 |
+| Start Flight — Blank Origin | `POST /flights`                     | 400 |
+| List All Flights | `GET /flights`                      | 200 |
+| Get Flight Status | `GET /flights/{{flightId}}`         | 200 |
+| Get Flight Status — Not Found | `GET /flights/-1`                   | 404 |
 | Get Flight History | `GET /flights/{{flightId}}/history` | 200 |
-| Get Flight History — Not Found | `GET /flights/does-not-exist/history` | 404 |
-| Stream Flight Metrics (SSE) | `GET /flights/{{flightId}}/stream` | 200 |
-| Stream — Reconnect with Last-Event-ID | `GET /flights/{{flightId}}/stream` | 200 |
+| Get Flight History — Not Found | `GET /flights/-1/history`           | 404 |
+| Stream Flight Metrics (SSE) | `GET /flights/{{flightId}}/stream`  | 200 |
+| Stream — Reconnect with Last-Event-ID | `GET /flights/{{flightId}}/stream`  | 200 |
 
 
 > **Note on SSE in Postman:** Postman displays the raw event stream in the response body.
