@@ -13,7 +13,7 @@ Server-Sent Events (SSE) stream.
 3. [Package Structure](#package-structure)
 4. [Prerequisites](#prerequisites)
 5. [Setup & Run](#setup--run)
-6. [Postman Collection](#option-c--postman-collection)
+6. [Postman Collection](#postman-collection)
 7. [API Reference](#api-reference)
 8. [Simulation Design](#simulation-design)
 9. [Configuration](#configuration)
