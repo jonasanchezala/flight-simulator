@@ -1,0 +1,394 @@
+{
+	"info": {
+		"_postman_id": "4904dd1f-1b57-41f0-af8b-4291201b8a96",
+		"name": "Flight Simulator",
+		"description": "Complete test collection for the Flight Status Simulator API.\n\nWorkflow:\n\n1. Run 'Start Flight' — the flightId is auto-saved to the collection variable\n    \n2. Run 'Get Flight Status' to see current phase + latest metrics\n    \n3. Run 'List All Flights' to see all active/completed flights\n    \n4. Run 'Get Flight History' to see all recorded metric snapshots\n    \n5. Open 'Stream Flight Metrics (SSE)' in a browser or curl\n    \n\nVariables:\n\n- baseUrl → [http://localhost:8080](http://localhost:8080)\n    \n- flightId → auto-set after 'Start Flight'",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "7781790"
+	},
+	"item": [
+		{
+			"name": "Flights",
+			"item": [
+				{
+					"name": "Start Flight",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"origin\": \"LAX\",\n  \"destination\": \"JFK\",\n  \"airline\": \"Simulated Airlines\",\n  \"flightNumber\": \"SA003\",\n  \"timeMultiplier\": 120\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/flights",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"flights"
+							]
+						},
+						"description": "Starts a new LAX → JFK flight simulation.\n\nThe `flightId` from the response is automatically saved as a collection variable and used by all subsequent requests."
+					},
+					"response": []
+				},
+				{
+					"name": "Start Flight – Blank Origin (400)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"origin\": \"\",\n  \"destination\": \"JFK\",\n  \"airline\": \"Bad Airlines\",\n  \"flightNumber\": \"BA001\",\n  \"timeMultiplier\": 60\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/flights",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"flights"
+							]
+						},
+						"description": "Verifies Bean Validation: blank origin triggers a 400 with VALIDATION_ERROR."
+					},
+					"response": []
+				},
+				{
+					"name": "List All Flights",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"packages": {},
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/flights",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"flights"
+							]
+						},
+						"description": "Returns all flights — both active and completed."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Flight Status",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/flights/{{flightId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"flights",
+								"{{flightId}}"
+							]
+						},
+						"description": "Returns the current flight state and the most recent metrics snapshot.\n\nRun 'Start Flight' first to populate {{flightId}}."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Flight Status – Not Found (404)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/flights/-1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"flights",
+								"-1"
+							]
+						},
+						"description": "Verifies that an unknown flight ID returns 404 with FLIGHT_NOT_FOUND error code."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Flight History",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/flights/{{flightId}}/history",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"flights",
+								"{{flightId}}",
+								"history"
+							]
+						},
+						"description": "Returns the full ordered metric history for the flight.\n\nRun 'Start Flight' first. Wait a few seconds for ticks to fire before calling this."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Flight History – Not Found (404)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/flights/-1/history",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"flights",
+								"-1",
+								"history"
+							]
+						},
+						"description": "Verifies that history for an unknown flight returns 404."
+					},
+					"response": []
+				},
+				{
+					"name": "Stream Flight Metrics (SSE)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "text/event-stream"
+							},
+							{
+								"key": "Cache-Control",
+								"value": "no-cache"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/flights/{{flightId}}/stream",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"flights",
+								"{{flightId}}",
+								"stream"
+							]
+						},
+						"description": "Opens a Server-Sent Events stream for the flight.\n\nPostman will show the raw event stream. Each event has:\n- `id`    → simulatedElapsedMinutes (use as Last-Event-ID to reconnect)\n- `event` → METRICS or COMPLETED\n- `data`  → JSON metrics payload\n\nFor a better SSE experience use curl:\n  curl -N http://localhost:8080/flights/<id>/stream\n\nOr open the URL directly in a browser."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Health & Docs",
+			"item": [
+				{
+					"name": "Swagger UI",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/swagger-ui.html",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"swagger-ui.html"
+							]
+						},
+						"description": "Opens the Swagger UI — interactive API documentation."
+					},
+					"response": []
+				},
+				{
+					"name": "OpenAPI Spec (JSON)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api-docs",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api-docs"
+							]
+						},
+						"description": "Returns the raw OpenAPI 3.0 JSON specification."
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8080"
+		},
+		{
+			"key": "flightId",
+			"value": ""
+		}
+	]
+}
